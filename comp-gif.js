@@ -12,7 +12,7 @@ cc.Class({
       default: cc.WrapMode.Loop
     },
     playOnLoad: true,
-    onAnimationEnd: {
+    onAnimateFinished: {
       type: cc.Component.EventHandler,
       default: null
     },
@@ -34,20 +34,20 @@ cc.Class({
 
     // animation clip name must be set before add to animation
     clip.name = 'comp-spriteframe-anim'
-    clip.wrapMode = this.wrapMode;
     anim.addClip(clip);
     if (this.playOnLoad) {
-      let state = anim.play(clip.name);
-      state.repeatCount = this.repeatCount < 0 ? Infinity : this.repeatCount;
+      this.play(this.repeatCount, this.wrapMode);
     }
-    anim.on('lastframe', e => {
-      EventUtils.callHandler(this.onLastFrame, [e, anim, this]);
-    });
+
   },
   play (repeatCount = Infinity, wrapMode = cc.WrapMode.Loop) {
     const state = this.animation.play(this.clip.name);
     state.wrapMode = wrapMode;
-    state.repeatCount = repeatCount;
+    state.repeatCount = this.repeatCount < 0 ? Infinity : repeatCount;
+    this.animation.once('finished', this._onAnimateFinished, this);
+  },
+  _onAnimateFinished (e) {
+    EventUtils.callHandler(this.onAnimateFinished, [e, this.animation, this]);
   },
   _createAtlas () {
     this.atlas = new cc.SpriteAtlas();
