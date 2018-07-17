@@ -28,7 +28,7 @@ cc.Class({
   init () {
     this._frames = this.atlas.getSpriteFrames();
     this._createAtlas();
-    this.addComponent(cc.Sprite);
+    if (!this.getComponent(cc.Sprite)) this.addComponent(cc.Sprite);
     const anim = this.animation = this.addComponent(cc.Animation);
     const clip = this.clip = cc.AnimationClip.createWithSpriteFrames(this._getFrames(), this.sample);
 
