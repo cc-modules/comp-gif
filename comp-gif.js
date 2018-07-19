@@ -38,13 +38,26 @@ cc.Class({
     if (this.playOnLoad) {
       this.play(this.repeatCount, this.wrapMode);
     }
-
   },
-  play (repeatCount = Infinity, wrapMode = cc.WrapMode.Loop) {
+  showFrameAt (index) {
+    const frame = this._frames[index];
+    if (!frame) return false;
+    const sprite = this.node.getComponent(cc.Sprite)
+    sprite.spriteFrame = frame;
+    return frame;
+  },
+  play (repeatCount = Infinity, wrapMode = cc.WrapMode.Loop, callback = null) {
     const state = this.animation.play(this.clip.name);
     state.wrapMode = wrapMode;
     state.repeatCount = this.repeatCount < 0 ? Infinity : repeatCount;
-    this.animation.once('finished', this._onAnimateFinished, this);
+    this.animation.once('finished', callback || this._onAnimateFinished, this);
+  },
+  playp (repeatCount = 1) {
+    return new Promise((resolve) => {
+      this.play(repeatCount, cc.WrapMode.Normal, _ => {
+        resolve();
+      });
+    })
   },
   _onAnimateFinished (e) {
     EventUtils.callHandler(this.onAnimateFinished, [e, this.animation, this]);
