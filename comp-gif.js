@@ -1,6 +1,6 @@
 const EventUtils = require('util-events')
 cc.Class({
-  name: 'CompGif',
+  name: 'Gif',
   extends: cc.Component,
   properties: {
     atlas: {
@@ -19,6 +19,7 @@ cc.Class({
     prefix: '',
     from: -1,
     to: -1,
+    frameSequence: '',
     sample: 10,
     repeatCount: -1
   },
@@ -67,6 +68,12 @@ cc.Class({
     this._frames.forEach(f => this.atlas._spriteFrames[f._name] = f);
   },
   _getFrames () {
+    // frame sequence has higher priority thant from+to
+    if (this.frameSequence) {
+      let indices = this.frameSequence.split(',');
+      return indices.map(i => this.atlas.getSpriteFrame(`${this.prefix}${i}`));
+    }
+
     if (this.from < 0 || this.to < 0) {
       return this._frames;
     }
