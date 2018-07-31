@@ -7,6 +7,10 @@ cc.Class({
       type: cc.SpriteAtlas,
       default: null
     },
+    srcBlendFactor: {
+      type: cc.BlendFunc.BlendFactor,
+      default: cc.BlendFunc.BlendFactor.ONE
+    },
     wrapMode: {
       type: cc.WrapMode,
       default: cc.WrapMode.Loop
@@ -17,6 +21,7 @@ cc.Class({
       default: null
     },
     prefix: '',
+    suffix: '',
     from: -1,
     to: -1,
     frameSequence: '',
@@ -29,7 +34,10 @@ cc.Class({
   init () {
     this._frames = this.atlas.getSpriteFrames();
     this._createAtlas();
-    if (!this.getComponent(cc.Sprite)) this.addComponent(cc.Sprite);
+
+    let sprite = this.getComponent(cc.Sprite)
+    if (!sprite) sprite = this.addComponent(cc.Sprite);
+    sprite.srcBlendFactor = this.srcBlendFactor;
     const anim = this.animation = this.addComponent(cc.Animation);
     const clip = this.clip = cc.AnimationClip.createWithSpriteFrames(this._getFrames(), this.sample);
 
@@ -71,7 +79,7 @@ cc.Class({
     // frame sequence has higher priority thant from+to
     if (this.frameSequence) {
       let indices = this.frameSequence.split(',');
-      return indices.map(i => this.atlas.getSpriteFrame(`${this.prefix}${i}`));
+      return indices.map(i => this.atlas.getSpriteFrame(`${this.prefix}${i}${this.suffix}`));
     }
 
     if (this.from < 0 || this.to < 0) {
@@ -79,7 +87,7 @@ cc.Class({
     }
     const frames = [];
     for(let i = this.from; i <= this.to; ++i) {
-      let frame = this.atlas.getSpriteFrame(`${this.prefix}${i}`);
+      let frame = this.atlas.getSpriteFrame(`${this.prefix}${i}${this.suffix}`);
       if (frame) frames.push(frame);
     }
     return frames;
