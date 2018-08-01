@@ -28,6 +28,37 @@ cc.Class({
     sample: 10,
     repeatCount: -1
   },
+  statics:{
+    createOn (parentNode, spriteFrames, {
+      from = -1,
+      to = -1,
+      sample = 10,
+      prefix = '',
+      suffix = ''
+    }) {
+      // atlas
+      const atlas = new cc.SpriteAtlas();
+      atlas._spriteFrames = spriteFrames;
+
+      // node
+      const node = new cc.Node('comp-gif-node');
+      node.parent = parentNode
+
+      // gif
+      const gif = this.gif = new Gif();
+      gif.node = node;
+      gif.atlas = atlas;
+      gif.from = from;
+      gif.to = to;
+      gif.sample = sample;
+      gif.prefix = prefix;
+      gif.suffix = suffix;
+      parentNode._components.push(gif);
+      gif.init()
+
+      return gif
+    }
+  },
   onLoad () {
     this.init();
   },
