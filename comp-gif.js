@@ -34,7 +34,13 @@ cc.Class({
       to = -1,
       sample = 10,
       prefix = '',
-      suffix = ''
+      suffix = '',
+      srcBlendFactor = cc.BlendFunc.BlendFactor.ONE,
+      wrapMode = cc.WrapMode.Loop,
+      playOnLoad = true,
+      onAnimateFinished = null,
+      repeatCount = -1,
+      frameSequence = ''
     }) {
       // atlas
       const atlas = new cc.SpriteAtlas();
@@ -47,12 +53,24 @@ cc.Class({
       // gif
       const gif = this.gif = new Gif();
       gif.node = node;
+
+      // frequently used options
       gif.atlas = atlas;
       gif.from = from;
       gif.to = to;
       gif.sample = sample;
       gif.prefix = prefix;
       gif.suffix = suffix;
+
+      // less frequently used options
+      gif.srcBlendFactor = srcBlendFactor;
+      gif.wrapMode = wrapMode;
+      gif.playOnLoad = playOnLoad;
+      gif.onAnimateFinished = onAnimateFinished;
+      gif.repeatCount = repeatCount;
+      gif.frameSequence = frameSequence;
+
+      // init gif
       parentNode._components.push(gif);
       gif.init()
 
