@@ -71,7 +71,7 @@ cc.Class({
       gif.frameSequence = frameSequence;
 
       // init gif
-      parentNode._components.push(gif);
+      node._components.push(gif);
       gif.init()
 
       return gif
