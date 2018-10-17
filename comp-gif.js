@@ -8,8 +8,8 @@ cc.Class({
       default: null
     },
     srcBlendFactor: {
-      type: cc.macro.BlendFactor,
-      default: cc.macro.BlendFactor.ONE
+      type: cc.macro ? cc.macro.BlendFactor : cc.BlendFunc.BlendFactor,
+      default: cc.macro ? cc.macro.BlendFactor.ONE : cc.BlendFunc.BlendFactor.ONE,
     },
     wrapMode: {
       type: cc.WrapMode,
@@ -35,7 +35,7 @@ cc.Class({
       sample = 10,
       prefix = '',
       suffix = '',
-      srcBlendFactor = cc.macro.BlendFactor.ONE,
+      srcBlendFactor = cc.macro ? cc.macro.BlendFactor.ONE : cc.BlendFunc.BlendFactor.ONE,
       wrapMode = cc.WrapMode.Loop,
       playOnLoad = true,
       onAnimateFinished = null,
