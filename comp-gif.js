@@ -7,6 +7,10 @@ cc.Class({
       type: cc.SpriteAtlas,
       default: null
     },
+    frames: {
+      type: [cc.SpriteFrame],
+      default: () => []
+    },
     srcBlendFactor: {
       type: cc.macro ? cc.macro.BlendFactor : cc.BlendFunc.BlendFactor,
       default: cc.macro.BlendFactor ? cc.macro.BlendFactor.ONE : cc.BlendFunc.BlendFactor.ONE,
@@ -28,61 +32,28 @@ cc.Class({
     sample: 10,
     repeatCount: -1
   },
-  statics:{
-    createOn (parentNode, spriteFrames, {
-      from = -1,
-      to = -1,
-      sample = 10,
-      prefix = '',
-      suffix = '',
-      srcBlendFactor = cc.macro.BlendFactor ? cc.macro.BlendFactor.ONE : cc.BlendFunc.BlendFactor.ONE,
-      wrapMode = cc.WrapMode.Loop,
-      playOnLoad = true,
-      onAnimateFinished = null,
-      repeatCount = -1,
-      frameSequence = ''
-    }) {
-      // atlas
-      const atlas = new cc.SpriteAtlas();
-      atlas._spriteFrames = spriteFrames;
-
-      // node
-      const node = new cc.Node('comp-gif-node');
-      node.parent = parentNode
-
-      // gif
-      const gif = this.gif = new Gif();
-      gif.node = node;
-
-      // frequently used options
-      gif.atlas = atlas;
-      gif.from = from;
-      gif.to = to;
-      gif.sample = sample;
-      gif.prefix = prefix;
-      gif.suffix = suffix;
-
-      // less frequently used options
-      gif.srcBlendFactor = srcBlendFactor;
-      gif.wrapMode = wrapMode;
-      gif.playOnLoad = playOnLoad;
-      gif.onAnimateFinished = onAnimateFinished;
-      gif.repeatCount = repeatCount;
-      gif.frameSequence = frameSequence;
-
-      // init gif
-      node._components.push(gif);
-      gif.init()
-
-      return gif
-    }
-  },
   onLoad () {
     this.init();
   },
   init () {
-    this._frames = this.atlas.getSpriteFrames();
-    this._createAtlas();
+    const noFrames = !this.frames || !this.frames.length;
+    const noAtlas = !this.atlas;
+    if (noFrames && noAtlas) {
+      console.warn(`[${this.name}] one of frames and atlas is required!`);
+      return;
+    }
+    if (this.atlas) {
+      cc.log(`[${this.name}] using atlas`);
+      this._frames = this.atlas.getSpriteFrames();
+      if (!this._frames.length) {
+        cc.log(`[${this.name}] with frames`);
+        this._frames = this.frames;
+      }
+      this._createAtlas();
+    } else {
+      cc.log(`[${this.name}] using frames`);
+      this._frames = this.frames;
+    }
 
     let sprite = this.getComponent(cc.Sprite)
     if (!sprite) sprite = this.addComponent(cc.Sprite);
@@ -118,13 +89,16 @@ cc.Class({
     })
   },
   _onAnimateFinished (e) {
-    EventUtils.callHandler(this.onAnimateFinished, [e, this.animation, this]);
+    if (this.onAnimateFinished) {
+      EventUtils.callHandler(this.onAnimateFinished, [e, this.animation, this]);
+    }
   },
   _createAtlas () {
     this.atlas = new cc.SpriteAtlas();
     this._frames.forEach(f => this.atlas._spriteFrames[f._name] = f);
   },
   _getFrames () {
+    if (this.frames && this.frames.length) return this.frames;
     // frame sequence has higher priority thant from+to
     if (this.frameSequence) {
       let indices = this.frameSequence.split(',');
