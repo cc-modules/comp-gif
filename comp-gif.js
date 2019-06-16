@@ -15,6 +15,10 @@ cc.Class({
       type: cc.macro ? cc.macro.BlendFactor : cc.BlendFunc.BlendFactor,
       default: cc.macro.BlendFactor ? cc.macro.BlendFactor.ONE : cc.BlendFunc.BlendFactor.ONE,
     },
+    dstBlendFactor: {
+      type: cc.macro ? cc.macro.BlendFactor : cc.BlendFunc.BlendFactor,
+      default: cc.macro.BlendFactor ? cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA : cc.BlendFunc.BlendFactor.ONE_MINUS_SRC_ALPHA,
+    },
     wrapMode: {
       type: cc.WrapMode,
       default: cc.WrapMode.Loop
@@ -58,6 +62,7 @@ cc.Class({
     let sprite = this.getComponent(cc.Sprite)
     if (!sprite) sprite = this.addComponent(cc.Sprite);
     sprite.srcBlendFactor = this.srcBlendFactor;
+    sprite.dstBlendFactor = this.dstBlendFactor;
     const anim = this.animation = this.addComponent(cc.Animation);
     const clip = this.clip = cc.AnimationClip.createWithSpriteFrames(this._getFrames(), this.sample);
 
