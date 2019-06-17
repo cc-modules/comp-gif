@@ -13,7 +13,7 @@ cc.Class({
     },
     srcBlendFactor: {
       type: cc.macro ? cc.macro.BlendFactor : cc.BlendFunc.BlendFactor,
-      default: cc.macro.BlendFactor ? cc.macro.BlendFactor.ONE : cc.BlendFunc.BlendFactor.ONE,
+      default: cc.macro.BlendFactor ? cc.macro.BlendFactor.SRC_ALPHA : cc.BlendFunc.BlendFactor.SRC_ALPHA,
     },
     dstBlendFactor: {
       type: cc.macro ? cc.macro.BlendFactor : cc.BlendFunc.BlendFactor,
