@@ -1,4 +1,5 @@
 const EventUtils = require('util-events')
+const ConsoleLogger = require('util-console-logger');
 cc.Class({
   name: 'Gif',
   extends: cc.Component,
@@ -37,25 +38,26 @@ cc.Class({
     repeatCount: -1
   },
   onLoad () {
+    this.logger = new ConsoleLogger(this.name);
     this.init();
   },
   init () {
     const noFrames = !this.frames || !this.frames.length;
     const noAtlas = !this.atlas;
     if (noFrames && noAtlas) {
-      console.warn(`[${this.name}] one of frames and atlas is required!`);
+      this.logger.warn(`one of frames and atlas is required!`);
       return;
     }
     if (this.atlas) {
-      cc.log(`[${this.name}] using atlas`);
+      this.logger.log(`using atlas`);
       this._frames = this.atlas.getSpriteFrames();
       if (!this._frames.length) {
-        cc.log(`[${this.name}] with frames`);
+        this.logger.log(`with frames`);
         this._frames = this.frames;
       }
       this._createAtlas();
     } else {
-      cc.log(`[${this.name}] using frames`);
+      this.logger.log(`using frames`);
       this._frames = this.frames;
     }
 
@@ -74,8 +76,16 @@ cc.Class({
     }
   },
   showFrameAt (index) {
-    const frame = this._frames[index];
+    const frame = (this.frames || this._frames)[this.frameIndex = index];
     if (!frame) return false;
+    const sprite = this.node.getComponent(cc.Sprite)
+    sprite.spriteFrame = frame;
+    return frame;
+  },
+  showFrame (name) {
+    const frame = (this.frames || this._frames).find(f => f._name === name);
+    if (!frame) return false;
+    this.frameName = name;
     const sprite = this.node.getComponent(cc.Sprite)
     sprite.spriteFrame = frame;
     return frame;
