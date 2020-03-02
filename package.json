@@ -3,11 +3,6 @@
   "version": "1.0.2",
   "description": "",
   "main": "comp-gif.js",
-  "scripts": {},
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@code.vipkid.com.cn:3590/edu/cc-game/infra/comp-gif.git"
-  },
   "author": "wangweihua@vipkid.com.cn",
   "license": "ISC"
 }
