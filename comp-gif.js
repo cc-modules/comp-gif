@@ -29,6 +29,7 @@ cc.Class({
       type: cc.Component.EventHandler,
       default: null
     },
+    paddingZero: true,
     prefix: '',
     suffix: '',
     from: -1,
@@ -125,9 +126,19 @@ cc.Class({
     }
     const frames = [];
     for(let i = this.from; i <= this.to; ++i) {
-      let frame = this.atlas.getSpriteFrame(`${this.prefix}${i}${this.suffix}`);
+      const idx = this.paddingZero ? padZero(i, this.to - this.from) : i;
+      const name = `${this.prefix}${idx}${this.suffix}`;
+      let frame = this.atlas.getSpriteFrame(name);
       if (frame) frames.push(frame);
     }
     return frames;
   }
 });
+
+function padZero (i, n) {
+  let zeros = '';
+  const len = String(n).length;
+  const ilen = String(i).length;
+  for (let i = 0; i < len; i++) zeros += '0';
+  return `${zeros}${i}`.slice(Math.min(-ilen, -len));
+}

@@ -1,8 +1,7 @@
 {
   "name": "comp-gif",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
-  "main": "comp-gif.js",
   "author": "wangweihua@vipkid.com.cn",
   "license": "ISC"
 }
