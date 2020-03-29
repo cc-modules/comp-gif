@@ -39,6 +39,7 @@ cc.Class({
     repeatCount: -1
   },
   onLoad () {
+    this.node.gif = this;
     this.logger = new ConsoleLogger(this.name);
     this.init();
   },
