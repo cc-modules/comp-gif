@@ -4,9 +4,14 @@ cc.Class({
   name: 'Gif',
   extends: cc.Component,
   properties: {
+    multiAtlas: false,
     atlas: {
       type: cc.SpriteAtlas,
       default: null
+    },
+    atlases: {
+      type: [cc.SpriteAtlas],
+      default: () => []
     },
     frames: {
       type: [cc.SpriteFrame],
@@ -39,15 +44,14 @@ cc.Class({
     repeatCount: -1
   },
   onLoad () {
-    this.node.gif = this;
     this.logger = new ConsoleLogger(this.name);
     this.init();
   },
   init () {
     const noFrames = !this.frames || !this.frames.length;
     const noAtlas = !this.atlas;
-    if (noFrames && noAtlas) {
-      this.logger.warn(`one of frames and atlas is required!`);
+    if (noFrames && noAtlas && (this.multiAtlas && !this.atlases.length)) {
+      this.logger.warn(`one of frames or atlas or atlases is required!`);
       return;
     }
     if (this.atlas) {
@@ -58,7 +62,7 @@ cc.Class({
         this._frames = this.frames;
       }
       this._createAtlas();
-    } else {
+    } else if (!this.multiAtlas) {
       this.logger.log(`using frames`);
       this._frames = this.frames;
     }
@@ -106,11 +110,9 @@ cc.Class({
     })
   },
   _onAnimateFinished (e) {
-    const args = [e, this.animation, this];
     if (this.onAnimateFinished) {
-      EventUtils.callHandler(this.onAnimateFinished, args);
+      EventUtils.callHandler(this.onAnimateFinished, [e, this.animation, this]);
     }
-    this.node.emit('finished', ...args);
   },
   _createAtlas () {
     this.atlas = new cc.SpriteAtlas();
@@ -124,17 +126,31 @@ cc.Class({
       return indices.map(i => this.atlas.getSpriteFrame(`${this.prefix}${i}${this.suffix}`));
     }
 
-    if (this.from < 0 || this.to < 0) {
+    if (!this.multiAtlas && (this.from < 0 || this.to < 0)) {
       return this._frames;
     }
-    const frames = [];
-    for(let i = this.from; i <= this.to; ++i) {
-      const idx = this.paddingZero ? padZero(i, this.to - this.from) : i;
-      const name = `${this.prefix}${idx}${this.suffix}`;
-      let frame = this.atlas.getSpriteFrame(name);
-      if (frame) frames.push(frame);
+    
+    if (this.multiAtlas) {
+      return this.atlases
+        .reduce((all, atlas) => all.concat(atlas.getSpriteFrames()), [])
+        .sort((a,b) => {
+          a = a.name.replace(this.prefix, '').replace(this.suffix, '');
+          b = b.name.replace(this.prefix, '').replace(this.suffix, '');
+          const dist = this.to - this.from
+          a = padZero(a, dist);
+          b = padZero(b, dist);
+          return a > b ? 1 : -1
+        });
+    } else {
+      const frames = [];
+      for(let i = this.from; i <= this.to; ++i) {
+        const idx = this.paddingZero ? padZero(i, this.to - this.from) : i;
+        const name = `${this.prefix}${idx}${this.suffix}`;
+        let frame = this.atlas.getSpriteFrame(name);
+        if (frame) frames.push(frame);
+      }
+      return frames;
     }
-    return frames;
   }
 });
 
