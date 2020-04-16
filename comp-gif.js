@@ -44,6 +44,7 @@ cc.Class({
     repeatCount: -1
   },
   onLoad () {
+    this.node.gif = this;
     this.logger = new ConsoleLogger(this.name);
     this.init();
   },
@@ -110,9 +111,11 @@ cc.Class({
     })
   },
   _onAnimateFinished (e) {
+    const args = [e, this.animation, this];
     if (this.onAnimateFinished) {
-      EventUtils.callHandler(this.onAnimateFinished, [e, this.animation, this]);
+      EventUtils.callHandler(this.onAnimateFinished, args);
     }
+    this.node.emit('finished', ...args);
   },
   _createAtlas () {
     this.atlas = new cc.SpriteAtlas();
