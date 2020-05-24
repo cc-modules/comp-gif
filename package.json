@@ -1,7 +1,5 @@
 {
   "name": "comp-gif",
-  "version": "1.0.5",
-  "description": "A Gif Player",
-  "author": "wangweihua@vipkid.com.cn",
-  "license": "ISC"
+  "version": "1.0.6",
+  "description": "A Gif Player"
 }
