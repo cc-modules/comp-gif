@@ -125,3 +125,7 @@ export default class Gif extends cc.Component {
    */
   playp(repeatCount:number): Promise<void>;
 }
+
+type MethodsOf<T> = Pick<T, {[K in keyof T]: T[K] extends Function ? K : never}[keyof T]>;
+type GifMethods = keyof Omit<MethodsOf<Gif>, keyof cc.Component>;
+export type IGifProps = Partial<Omit<Gif, keyof cc.Component | GifMethods>>;
